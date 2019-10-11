@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<p th:unless="${books} and ${books.size()}">No books yet</p>
+
+<table class="table">
+
+    <tr>
+        <th>Name</th>
+        <th>Author Name</th>
+        <th>Edit</th>
+
+    </tr>
+
+    <tr th:each ="book : ${books}">
+        <td th:text="${book.name}"></td>
+        <td th:text="${book.authorName}"></td>
+        <td><a th:href="@{'/book/edit/' + ${book.bookId}}">Edit</a> </td>
+    </tr>
+</table>
+
+</body>
+</html>
