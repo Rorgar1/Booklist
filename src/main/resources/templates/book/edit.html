@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- add cheese/edit form by copying add.html-->
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 <body class="container">
@@ -20,6 +20,15 @@
         <span th:errors="*{authorName}" class="error"></span>
     </div>
 
+    <div class="form-group">
+        <label th:for="rating">Rating</label>
+        <select th:field="*{rating}">
+            <option th:each="bookRating : ${bookRatings}"
+                    th:text="${bookRating.name}"
+                    th:value="${bookRating}"></option>
+        </select>
+        <span th:errors="*{rating}" class="error" style="color: red;"></span>
+    </div>
 
 
     <input type="hidden" th:value="${book.bookId}" name="bookId" />
