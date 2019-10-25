@@ -14,6 +14,7 @@
     <tr>
         <th>Name</th>
         <th>Author Name</th>
+        <th>Rating</th>
         <th>Edit</th>
 
     </tr>
@@ -21,6 +22,7 @@
     <tr th:each ="book : ${books}">
         <td th:text="${book.name}"></td>
         <td th:text="${book.authorName}"></td>
+        <td th:text="${book.rating}"></td>
         <td><a th:href="@{'/book/edit/' + ${book.bookId}}">Edit</a> </td>
     </tr>
 </table>

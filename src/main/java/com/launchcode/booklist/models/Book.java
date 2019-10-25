@@ -17,6 +17,8 @@ public class Book {
     private int bookId;
     private static int nextId = 1;
 
+    private BookRating rating = BookRating.TOBEREAD;
+
     public Book(String name, String authorName) {
         this();
         this.name = name;
@@ -51,6 +53,12 @@ public class Book {
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
+
+    public BookRating getRating() { return rating; }
+
+    public void setRating(BookRating rating) {this.rating = rating; }
 }
+
+
 
 
