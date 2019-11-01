@@ -2,7 +2,7 @@ package com.launchcode.booklist.models;
 
 public enum BookRating {
 
-    ToBeRead ("To Be Read"),
+    TOBEREAD ("To Be Read"),
     WILLREADAGAIN ("Will Read Again"),
     MIGHTREADAGAIN ("Might Read Again"),
     IREADIT ("I read it but won't do it again"),

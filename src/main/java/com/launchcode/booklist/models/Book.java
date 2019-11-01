@@ -17,7 +17,7 @@ public class Book {
     private int bookId;
     private static int nextId = 1;
 
-    private BookRating rating = BookRating.ToBeRead;
+    private BookRating rating = BookRating.TOBEREAD;
 
     public Book(String name, String authorName) {
         this();
