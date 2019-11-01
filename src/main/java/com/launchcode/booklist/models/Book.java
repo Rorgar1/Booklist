@@ -1,8 +1,11 @@
 package com.launchcode.booklist.models;
 
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 
 public class Book {
 
