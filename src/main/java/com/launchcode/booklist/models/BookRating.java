@@ -3,11 +3,11 @@ package com.launchcode.booklist.models;
 public enum BookRating {
 
     TOBEREAD ("To Be Read"),
-    WILLREADAGAIN ("Will Read Again"),
+    WILLREADAGAIN ("Great! Would Read Again!"),
     MIGHTREADAGAIN ("Might Read Again"),
-    IREADIT ("I read it but won't do it again"),
-    NEVERAGAIN ("I will never read it again"),
-    CANTDOIT ("I can't finish it.");
+    IREADIT ("Read it once, but won't again"),
+    NEVERAGAIN ("I will never read it again!"),
+    CANTDOIT ("No way - I can't finish it.");
 
     private final String name;
 
