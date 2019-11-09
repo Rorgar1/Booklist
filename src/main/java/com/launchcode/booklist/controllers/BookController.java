@@ -1,8 +1,10 @@
 package com.launchcode.booklist.controllers;
 
 import com.launchcode.booklist.models.Book;
-import com.launchcode.booklist.models.BookData;
+//import com.launchcode.booklist.models.BookData;
 import com.launchcode.booklist.models.BookRating;
+import com.launchcode.booklist.models.data.BookDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -14,11 +16,14 @@ import javax.validation.Valid;
 @RequestMapping(value = "book")
 public class BookController {
 
+    @Autowired
+    private BookDao bookDao;
+
     //request path: book/
     @RequestMapping(value = "")
     public String index(Model model) {
 
-        model.addAttribute("books", BookData.getAll());
+        model.addAttribute("books", bookDao.findAll());
         model.addAttribute("title", "My Books");
         return "book/index";
     }
@@ -38,7 +43,7 @@ public class BookController {
             model.addAttribute("title", "Add Book");
             return "book/add";
         }
-        BookData.add(newBook);
+        bookDao.save(newBook);
         return "redirect:";
     }
 
@@ -46,17 +51,18 @@ public class BookController {
     @RequestMapping(value = "remove", method = RequestMethod.GET)
     public String displayRemoveBookForm(Model model) {
         model.addAttribute("title", "Remove Book");
-        model.addAttribute("books", BookData.getAll());
+        model.addAttribute("books", bookDao.findAll());
         return "book/remove";
     }
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveBookForm(@RequestParam int[] bookIds) {
         for (int bookId : bookIds) {
-          BookData.remove(bookId);
+          bookDao.deleteById(bookId);
         }
         return "redirect:";
     }
     //edit booklist
+    /*
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
     public String displayEditForm(Model model, @PathVariable int bookId) {
         Book book = BookData.getById(bookId);
@@ -75,7 +81,7 @@ public class BookController {
         book.setRating(rating);
 
         return "redirect:/book";
-    }
+    } */
 
 
     }
