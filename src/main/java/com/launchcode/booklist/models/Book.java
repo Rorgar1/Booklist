@@ -1,13 +1,10 @@
 package com.launchcode.booklist.models;
 
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Optional;
 
 @Entity
 public class Book {
@@ -24,10 +21,14 @@ public class Book {
     @Size(min = 3, message = "Author name must not be empty")
     private String authorName;
 
+    @ManyToOne
+    private Optional<BookRating> bookRating;
+
+
     //private int bookId;
     //private static int nextId = 1;
 
-    private BookRating rating = BookRating.TOBEREAD;
+    //private BookRating bookRating = BookRating.TOBEREAD;
 
     public Book(String name, String authorName) {
         //this();
@@ -59,9 +60,9 @@ public class Book {
     //public int getBookId() {return bookId;}
     //public void setBookId(int bookId) {this.bookId = bookId;}
 
-    public BookRating getRating() { return rating; }
+    public Optional<BookRating> getBookRating() { return bookRating; }
 
-    public void setRating(BookRating rating) {this.rating = rating; }
+    public void setBookRating(Optional<BookRating> bookRating) {this.bookRating = bookRating; }
 
     public int getId() { return id; }
 }
