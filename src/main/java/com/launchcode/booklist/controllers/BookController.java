@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "book")
@@ -62,26 +63,28 @@ public class BookController {
         return "redirect:";
     }
     //edit booklist
-    /*
+
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
     public String displayEditForm(Model model, @PathVariable int bookId) {
-        Book book = BookData.getById(bookId);
-        model.addAttribute("book", BookData.getById(bookId));
+        Optional<Book> optionalBook = bookDao.findById(bookId);
+        Book book = optionalBook.get();
+        model.addAttribute("book", bookDao.findById(bookId).get());
         model.addAttribute("bookRatings", BookRating.values());
         model.addAttribute("title", "Edit Books: " +
-                book.getName() + " ( id = " + book.getBookId() + " ) ");
+                book.getName() + " ( id = " + book.getId() + " ) ");
 
         return "book/edit";
     }
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
-    public String processEditForm(int bookId, String name, String authorName, BookRating rating) {
-        Book book = BookData.getById(bookId);
+    public String processEditForm(int bookId, String name, String authorName, BookRating bookRating) {
+        Optional<Book> optionalBook = bookDao.findById(bookId);
+        Book book = optionalBook.get();
         book.setAuthorName(authorName);
         book.setName(name);
-        book.setRating(rating);
+        book.setRating(bookRating);
 
         return "redirect:/book";
-    } */
+    }
 
 
     }
