@@ -68,20 +68,22 @@ public class BookController {
     public String displayEditForm(Model model, @PathVariable int bookId) {
         Optional<Book> optionalBook = bookDao.findById(bookId);
         Book book = optionalBook.get();
-        model.addAttribute("book", bookDao.findById(bookId).get());
+        model.addAttribute("book", bookDao.findById(bookId));
         model.addAttribute("bookRatings", BookRating.values());
         model.addAttribute("title", "Edit Books: " +
                 book.getName() + " ( id = " + book.getId() + " ) ");
 
         return "book/edit";
     }
-    @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
-    public String processEditForm(int bookId, String name, String authorName, BookRating bookRating) {
+    @RequestMapping(value = "edit", method = RequestMethod.POST)
+    public String processEditForm(@RequestParam int bookId, @RequestParam String name,
+                                  @RequestParam String authorName,
+                                  @RequestParam BookRating rating) {
         Optional<Book> optionalBook = bookDao.findById(bookId);
         Book book = optionalBook.get();
         book.setAuthorName(authorName);
         book.setName(name);
-        book.setRating(bookRating);
+        book.setRating(rating);
 
         return "redirect:/book";
     }
