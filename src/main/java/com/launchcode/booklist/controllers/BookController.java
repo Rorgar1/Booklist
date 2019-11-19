@@ -4,6 +4,8 @@ import com.launchcode.booklist.models.Book;
 //import com.launchcode.booklist.models.BookData;
 import com.launchcode.booklist.models.BookRating;
 import com.launchcode.booklist.models.data.BookDao;
+import com.launchcode.booklist.models.data.BookRatingDao;
+import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -19,6 +22,9 @@ public class BookController {
 
     @Autowired
     private BookDao bookDao;
+
+    @Autowired
+    private BookRatingDao bookRatingDao;
 
     //request path: book/
     @RequestMapping(value = "")
@@ -34,16 +40,23 @@ public class BookController {
     public String displayAddBookForm(Model model) {
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
-        model.addAttribute("bookRatings", BookRating.values());
+        model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
+
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
-                                     Errors errors, Model model) {
+                                     Errors errors,
+                                     @RequestParam int bookRatingId,
+                                     Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
+            model.addAttribute("bookRatings", bookRatingDao.findAll());
             return "book/add";
         }
+        Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
+        BookRating bookRating = optionalBookRating.get();
+        newBook.setBookRating(bookRating);
         bookDao.save(newBook);
         return "redirect:";
     }
@@ -62,28 +75,41 @@ public class BookController {
         }
         return "redirect:";
     }
+
+    @RequestMapping(value = "bookRating", method = RequestMethod.GET)
+    public String bookRating(Model model, @RequestParam int id) {
+
+        Optional<BookRating> optionalBookRating = bookRatingDao.findById(id);
+        BookRating bookRating = optionalBookRating.get();
+        List<Book> books = bookRating.getBooks();
+        model.addAttribute("books", books);
+        model.addAttribute("title", "Books in Rating Category" +
+                bookRating.getName());
+        return "book/index";
+    }
+
     //edit booklist
 
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
-    public String displayEditForm(Model model, @PathVariable int bookId) {
-        Optional<Book> optionalBook = bookDao.findById(bookId);
+    public String displayEditForm(Model model, @PathVariable int id) {
+        Optional<Book> optionalBook = bookDao.findById(id);
         Book book = optionalBook.get();
-        model.addAttribute("book", bookDao.findById(bookId));
-        model.addAttribute("bookRatings", BookRating.values());
+        model.addAttribute("book", bookDao.findById(id));
+        model.addAttribute("bookRatings", bookRatingDao.findById(id));
         model.addAttribute("title", "Edit Books: " +
                 book.getName() + " ( id = " + book.getId() + " ) ");
 
         return "book/edit";
     }
     @RequestMapping(value = "edit", method = RequestMethod.POST)
-    public String processEditForm(@RequestParam int bookId, @RequestParam String name,
+    public String processEditForm(@RequestParam int id, @RequestParam String name,
                                   @RequestParam String authorName,
                                   @RequestParam BookRating rating) {
-        Optional<Book> optionalBook = bookDao.findById(bookId);
+        Optional<Book> optionalBook = bookDao.findById(id);
         Book book = optionalBook.get();
         book.setAuthorName(authorName);
         book.setName(name);
-        book.setRating(rating);
+        book.setBookRating(rating);
 
         return "redirect:/book";
     }
