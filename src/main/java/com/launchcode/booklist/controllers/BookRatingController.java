@@ -22,7 +22,7 @@ package com.launchcode.booklist.controllers;
     BookRatingDao bookRatingDao;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(Model model, @RequestParam(defaultValue = "0") int id) {
+    public String index(Model model, @RequestParam(defaultValue = "0") int bookRatingId) {
         model.addAttribute("title", "BookRatings");
         model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "bookRating/index";

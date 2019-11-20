@@ -40,6 +40,7 @@ public class BookController {
     public String displayAddBookForm(Model model) {
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
+        model.addAttribute("bookRatingId", 0);
         model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
@@ -47,16 +48,16 @@ public class BookController {
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
                                      Errors errors,
-                                     @RequestParam int bookRatingId,
+                                    // @RequestParam int bookRatingId,
                                      Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
             model.addAttribute("bookRatings", bookRatingDao.findAll());
             return "book/add";
         }
-        Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
+ /*       Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
         BookRating bookRating = optionalBookRating.get();
-        newBook.setBookRating(bookRating);
+        newBook.setBookRating(bookRating); */
         bookDao.save(newBook);
         return "redirect:";
     }
@@ -77,9 +78,9 @@ public class BookController {
     }
 
     @RequestMapping(value = "bookRating", method = RequestMethod.GET)
-    public String bookRating(Model model, @RequestParam int id) {
+    public String bookRating(Model model, @RequestParam int bookRatingId) {
 
-        Optional<BookRating> optionalBookRating = bookRatingDao.findById(id);
+        Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
         BookRating bookRating = optionalBookRating.get();
         List<Book> books = bookRating.getBooks();
         model.addAttribute("books", books);
@@ -91,11 +92,11 @@ public class BookController {
     //edit booklist
 
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
-    public String displayEditForm(Model model, @PathVariable int id) {
-        Optional<Book> optionalBook = bookDao.findById(id);
+    public String displayEditForm(Model model, @PathVariable int bookRatingId) {
+        Optional<Book> optionalBook = bookDao.findById(bookRatingId);
         Book book = optionalBook.get();
-        model.addAttribute("book", bookDao.findById(id));
-        model.addAttribute("bookRatings", bookRatingDao.findById(id));
+        model.addAttribute("book", bookDao.findById(bookRatingId));
+        model.addAttribute("bookRatings", bookRatingDao.findById(bookRatingId));
         model.addAttribute("title", "Edit Books: " +
                 book.getName() + " ( id = " + book.getId() + " ) ");
 
@@ -104,12 +105,12 @@ public class BookController {
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public String processEditForm(@RequestParam int id, @RequestParam String name,
                                   @RequestParam String authorName,
-                                  @RequestParam BookRating rating) {
+                                  @RequestParam BookRating bookRating) {
         Optional<Book> optionalBook = bookDao.findById(id);
         Book book = optionalBook.get();
         book.setAuthorName(authorName);
         book.setName(name);
-        book.setBookRating(rating);
+        book.setBookRating(bookRating);
 
         return "redirect:/book";
     }

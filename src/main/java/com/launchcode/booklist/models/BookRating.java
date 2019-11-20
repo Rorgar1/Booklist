@@ -19,7 +19,7 @@ public class BookRating {
     private String name;
 
     @OneToMany
-    @JoinColumn(name = "bookRating_id")
+    @JoinColumn(name = "book_rating_id")
     private List<Book> books = new ArrayList<>();
 
     public BookRating() { }
