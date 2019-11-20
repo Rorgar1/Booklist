@@ -4,6 +4,9 @@ import com.launchcode.booklist.models.Book;
 //import com.launchcode.booklist.models.BookData;
 import com.launchcode.booklist.models.BookRating;
 import com.launchcode.booklist.models.data.BookDao;
+import com.launchcode.booklist.models.data.BookRatingDao;
+import javassist.NotFoundException;
+import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "book")
@@ -18,6 +23,9 @@ public class BookController {
 
     @Autowired
     private BookDao bookDao;
+
+    @Autowired
+    private BookRatingDao bookRatingDao;
 
     //request path: book/
     @RequestMapping(value = "")
@@ -33,16 +41,22 @@ public class BookController {
     public String displayAddBookForm(Model model) {
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
-        model.addAttribute("bookRatings", BookRating.values());
+        //model.addAttribute("bookRatingId", 0);
+        model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
+
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
-                                     Errors errors, Model model) {
+                                     Errors errors,
+                                    // @RequestParam int bookRatingId,
+                                     Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
+            model.addAttribute("bookRatings", bookRatingDao.findAll());
             return "book/add";
         }
+
         bookDao.save(newBook);
         return "redirect:";
     }
@@ -61,27 +75,42 @@ public class BookController {
         }
         return "redirect:";
     }
+
+    @RequestMapping(value = "bookRating", method = RequestMethod.GET)
+    public String bookRating(Model model, @RequestParam int bookRatingId) {
+
+        Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
+        BookRating bookRating = optionalBookRating.get();
+        List<Book> books = bookRating.getBooks();
+        model.addAttribute("books", books);
+        model.addAttribute("title", "Books in Rating Category" +
+                bookRating.getName());
+        return "book/index";
+    }
+
     //edit booklist
-    /*
+
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
-    public String displayEditForm(Model model, @PathVariable int bookId) {
-        Book book = BookData.getById(bookId);
-        model.addAttribute("book", BookData.getById(bookId));
-        model.addAttribute("bookRatings", BookRating.values());
+    public String displayEditForm(Model model, @PathVariable("bookId") int bookId) throws NotFoundException {
+        Optional<Book> optionalBook = bookDao.findById(bookId);
+        if (!optionalBook.isPresent()) {
+            throw new NotFoundException("Book does not exist");
+        }
+        Book book = optionalBook.get();
+        model.addAttribute("book", book);
+        model.addAttribute("bookRatings", bookRatingDao.findAll());
         model.addAttribute("title", "Edit Books: " +
-                book.getName() + " ( id = " + book.getBookId() + " ) ");
+                book.getName() + " ( id = " + book.getId() + " ) ");
 
         return "book/edit";
     }
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
-    public String processEditForm(int bookId, String name, String authorName, BookRating rating) {
-        Book book = BookData.getById(bookId);
-        book.setAuthorName(authorName);
-        book.setName(name);
-        book.setRating(rating);
+    public String processEditForm(@ModelAttribute @Valid Book editedBook, @PathVariable("bookId") int bookId) {
 
+        editedBook.setId(bookId);
+        bookDao.save(editedBook);
         return "redirect:/book";
-    } */
+    }
 
 
     }

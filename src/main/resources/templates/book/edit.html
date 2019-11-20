@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 <body class="container">
@@ -21,20 +21,19 @@
     </div>
 
     <div class="form-group">
-        <label th:for="rating">Rating</label>
-        <select th:field="*{rating}">
+        <label th:for="bookRating">Rating</label>
+        <select th:field ="*{bookRating}">
             <option th:each="bookRating : ${bookRatings}"
                     th:text="${bookRating.name}"
-                    th:value="${bookRating}"></option>
+                    th:value="${bookRating.id}"></option>
         </select>
-        <span th:errors="*{rating}" class="error" style="color: red;"></span>
+
     </div>
 
 
-    <input type="hidden" th:value="${book.id}" name="id" />
+
     <input type="submit" value="Edit Book" />
 </form>
 
 </body>
 </html>
--->
