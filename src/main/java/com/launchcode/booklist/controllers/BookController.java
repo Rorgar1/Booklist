@@ -5,6 +5,7 @@ import com.launchcode.booklist.models.Book;
 import com.launchcode.booklist.models.BookRating;
 import com.launchcode.booklist.models.data.BookDao;
 import com.launchcode.booklist.models.data.BookRatingDao;
+import javassist.NotFoundException;
 import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,7 @@ public class BookController {
     public String displayAddBookForm(Model model) {
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
-        model.addAttribute("bookRatingId", 0);
+        //model.addAttribute("bookRatingId", 0);
         model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
@@ -55,9 +56,7 @@ public class BookController {
             model.addAttribute("bookRatings", bookRatingDao.findAll());
             return "book/add";
         }
- /*       Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
-        BookRating bookRating = optionalBookRating.get();
-        newBook.setBookRating(bookRating); */
+
         bookDao.save(newBook);
         return "redirect:";
     }
@@ -92,26 +91,24 @@ public class BookController {
     //edit booklist
 
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
-    public String displayEditForm(Model model, @PathVariable int bookRatingId) {
-        Optional<Book> optionalBook = bookDao.findById(bookRatingId);
+    public String displayEditForm(Model model, @PathVariable("bookId") int bookId) throws NotFoundException {
+        Optional<Book> optionalBook = bookDao.findById(bookId);
+        if (!optionalBook.isPresent()) {
+            throw new NotFoundException("Book does not exist");
+        }
         Book book = optionalBook.get();
-        model.addAttribute("book", bookDao.findById(bookRatingId));
-        model.addAttribute("bookRatings", bookRatingDao.findById(bookRatingId));
+        model.addAttribute("book", book);
+        model.addAttribute("bookRatings", bookRatingDao.findAll());
         model.addAttribute("title", "Edit Books: " +
                 book.getName() + " ( id = " + book.getId() + " ) ");
 
         return "book/edit";
     }
-    @RequestMapping(value = "edit", method = RequestMethod.POST)
-    public String processEditForm(@RequestParam int id, @RequestParam String name,
-                                  @RequestParam String authorName,
-                                  @RequestParam BookRating bookRating) {
-        Optional<Book> optionalBook = bookDao.findById(id);
-        Book book = optionalBook.get();
-        book.setAuthorName(authorName);
-        book.setName(name);
-        book.setBookRating(bookRating);
+    @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
+    public String processEditForm(@ModelAttribute @Valid Book editedBook, @PathVariable("bookId") int bookId) {
 
+        editedBook.setId(bookId);
+        bookDao.save(editedBook);
         return "redirect:/book";
     }
 
