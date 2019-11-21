@@ -14,6 +14,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,15 +77,15 @@ public class BookController {
         return "redirect:";
     }
 
-    @RequestMapping(value = "bookRating", method = RequestMethod.GET)
-    public String bookRating(Model model, @RequestParam int bookRatingId) {
-
-        Optional<BookRating> optionalBookRating = bookRatingDao.findById(bookRatingId);
-        BookRating bookRating = optionalBookRating.get();
-        List<Book> books = bookRating.getBooks();
-        model.addAttribute("books", books);
-        model.addAttribute("title", "Books in Rating Category" +
-                bookRating.getName());
+//view books by rating
+    @RequestMapping(value = "bookRating{bookRatingId}", method = RequestMethod.GET)
+    public String displayBookRatingForm(Model model, @PathVariable int id) {
+        /*BookRating rating = (BookRating) bookRatingDao.findById(id).get();
+        List<Book> books = rating.getBooks();
+        model.addAttribute("books", books); */
+        model.addAttribute("books", bookRatingDao.findById(id).orElse(null));
+        //model.addAttribute("title","Books in Ratings Category: " +books.get(id));
+        model.addAttribute("title", "My Books");
         return "book/index";
     }
 
