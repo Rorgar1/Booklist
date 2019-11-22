@@ -1,12 +1,11 @@
 package com.launchcode.booklist.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User {
@@ -27,6 +26,10 @@ public class User {
     //email is optional, but if entered must be in valid format
     @Email
     private String email = "";
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<Book> books;
 
     public User() {
     }

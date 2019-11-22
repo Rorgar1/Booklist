@@ -31,6 +31,9 @@ public class Book {
     @ManyToOne
     private BookRating bookRating;
 
+    @ManyToOne
+    private User user;
+
     //private BookRating rating = BookRating.TOBEREAD;
 
     public Book(String name, String authorName) {

@@ -3,8 +3,10 @@ package com.launchcode.booklist.controllers;
 import com.launchcode.booklist.models.Book;
 //import com.launchcode.booklist.models.BookData;
 import com.launchcode.booklist.models.BookRating;
+import com.launchcode.booklist.models.User;
 import com.launchcode.booklist.models.data.BookDao;
 import com.launchcode.booklist.models.data.BookRatingDao;
+import com.launchcode.booklist.models.data.UserDao;
 import javassist.NotFoundException;
 import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
@@ -28,10 +31,19 @@ public class BookController {
     @Autowired
     private BookRatingDao bookRatingDao;
 
+    @Autowired
+    private UserDao userDao;
+
     //request path: book/
     @RequestMapping(value = "")
-    public String index(Model model) {
+    public String index(Model model,
+                        @CookieValue(value = "user", defaultValue = "none") String username)  {
 
+        if(username.equals("none")) {
+            return "redirect:/user/login";
+        }
+
+        User user = userDao.findByUsername(username).get(0);
         model.addAttribute("books", bookDao.findAll());
         model.addAttribute("title", "My Books");
         return "book/index";
