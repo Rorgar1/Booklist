@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
@@ -81,6 +82,18 @@ public class UserController {
             model.addAttribute("title", "Login");
             return "user/login";
         }
+    }
 
+    @RequestMapping(value = "logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                c.setMaxAge(0);
+                c.setPath("/");
+                response.addCookie(c);
+            }
+        }
+        return "user/login";
     }
 }

@@ -51,7 +51,12 @@ public class BookController {
 
     //request path book/add
     @RequestMapping(value = "add", method = RequestMethod.GET)
-    public String displayAddBookForm(Model model) {
+    public String displayAddBookForm(Model model,  @CookieValue(value = "user", defaultValue = "none") String username)  {
+
+        if(username.equals("none")) {
+            return "redirect:/user/login";
+        }
+
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
         //model.addAttribute("bookRatingId", 0);
@@ -76,7 +81,11 @@ public class BookController {
 
     //remove book
     @RequestMapping(value = "remove", method = RequestMethod.GET)
-    public String displayRemoveBookForm(Model model) {
+    public String displayRemoveBookForm(Model model,  @CookieValue(value = "user", defaultValue = "none") String username)  {
+
+        if(username.equals("none")) {
+            return "redirect:/user/login";
+        }
         model.addAttribute("title", "Remove Book");
         model.addAttribute("books", bookDao.findAll());
         return "book/remove";
