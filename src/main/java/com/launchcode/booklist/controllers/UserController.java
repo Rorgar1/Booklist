@@ -1,7 +1,6 @@
 package com.launchcode.booklist.controllers;
 
 import com.launchcode.booklist.models.User;
-import com.launchcode.booklist.models.UserData;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -14,45 +13,27 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping(value="user")
 public class UserController {
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("users", UserData.getAll());
-        return "user/index";
-    }
-
-    // Request path: cheese/
-    @RequestMapping(value = "add", method = RequestMethod.GET)
+    @RequestMapping(value="add", method = RequestMethod.GET)
     public String add(Model model) {
-        User user = new User();
-        model.addAttribute(user);
         model.addAttribute("title", "Add User");
-        model.addAttribute("error", null);
-        model.addAttribute("passMessage", "");
-        model.addAttribute("alphaMessage", "");
+        model.addAttribute("user", new User());
         return "user/add";
     }
-
-    @RequestMapping(value="add", method = RequestMethod.POST)
-    public String add(@ModelAttribute @Valid User user, Errors errors, Model model, String verify){
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public String add(Model model, @ModelAttribute @Valid User user, Errors errors, String verify_password) {
+        model.addAttribute("user", user);
 
         if (errors.hasErrors()) {
-            model.addAttribute("error", errors);
             return "user/add";
         }
 
-        if (!user.getPassword().equals(verify)) {
-            model.addAttribute("passMessage", "passwords do not match");
-            return "user/add";
+        if (user.getPassword().equals(verify_password)) {
+            return "user/index";
         }
-        if(!user.getUsername().matches("[a-zA-Z]*")) {
-            model.addAttribute("alphaMessage", "username must only have letters");
-            return "user/add";
-        }
-        model.addAttribute("title", "users");
-        UserData.add(user);
-        model.addAttribute("users", UserData.getAll());
-        return "user/index";
 
+        user.setPassword("");
+        model.addAttribute("error_message", "Passwords don't match. Please try again.");
+        return "user/add";
 
     }
 }

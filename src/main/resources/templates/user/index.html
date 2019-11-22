@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
+
 <head th:replace="fragments :: head"></head>
-<body class="container body-content">
-<h1 th:text="${title}">Default Title</h1>
+
+<body class="container">
+<h1 th:text="'Hello, ' + ${user.username} + '!'">Welcome User!</h1>
 
 <nav th:replace="fragments :: navigation"></nav>
-
-<tr th:each="user : ${users}">
-    <td th:text="${user.username} + ' Date joined: ' + ${user.myDate}"></td>
-    <br />
-</tr>
-
-
 </body>
+
 </html>

@@ -1,31 +1,28 @@
 package com.launchcode.booklist.models;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class User {
     @NotNull
-    @Size(min = 5, max = 15)
+    @Size(min = 5, max = 15, message = "Please enter a username with 5-15 characters.")
     private String username;
 
-    private String email;
 
     @NotNull
+    @Size(min = 1, max = 15, message = "Please enter a password.")
     private String password;
-    private int userId;
-    private int nextId;
-    private Date myDate;
 
+    //email is optional, but if entered must be in valid format
+    @Email
+    private String email = "";
 
     public User() {
-        userId = nextId;
-        nextId++;
-        this.myDate = new Date();
     }
 
     public User(String username, String email, String password) {
-        this();
         this.username = username;
         this.email = email;
         this.password = password;
@@ -53,14 +50,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public Date getMyDate() {
-        return myDate;
     }
 
 
