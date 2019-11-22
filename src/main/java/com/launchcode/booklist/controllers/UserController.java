@@ -1,6 +1,8 @@
 package com.launchcode.booklist.controllers;
 
 import com.launchcode.booklist.models.User;
+import com.launchcode.booklist.models.data.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -13,10 +15,15 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping(value="user")
 public class UserController {
+
+    @Autowired
+    private UserDao userDao;
+
     @RequestMapping(value="add", method = RequestMethod.GET)
     public String add(Model model) {
         model.addAttribute("title", "Add User");
         model.addAttribute("user", new User());
+
         return "user/add";
     }
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -28,6 +35,7 @@ public class UserController {
         }
 
         if (user.getPassword().equals(verify_password)) {
+            userDao.save(user);
             return "user/index";
         }
 

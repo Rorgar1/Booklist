@@ -1,11 +1,20 @@
 package com.launchcode.booklist.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@Entity
 public class User {
+
+    @Id
+    @GeneratedValue
+    private int id;
+
     @NotNull
     @Size(min = 5, max = 15, message = "Please enter a username with 5-15 characters.")
     private String username;
