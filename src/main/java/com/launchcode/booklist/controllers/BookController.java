@@ -37,23 +37,29 @@ public class BookController {
     //request path: book/
     @RequestMapping(value = "")
     public String index(Model model,
-                        @CookieValue(value = "user", defaultValue = "none") String username)  {
+                        @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        if(username.equals("none")) {
+        if (username.equals("none")) {
             return "redirect:/user/login";
         }
 
-        User user = userDao.findByUsername(username).get(0);
-        model.addAttribute("books", bookDao.findAll());
+        List<User> users = userDao.findByUsername(username);
+        if (users.isEmpty()) {
+            return "redirect:/user/login";
+        }
+        User loggedInUser = users.get(0);
+        List<Book> books = bookDao.findByUserId(loggedInUser.getId());
+
+        model.addAttribute("books", books);
         model.addAttribute("title", "My Books");
         return "book/index";
     }
 
     //request path book/add
     @RequestMapping(value = "add", method = RequestMethod.GET)
-    public String displayAddBookForm(Model model,  @CookieValue(value = "user", defaultValue = "none") String username)  {
+    public String displayAddBookForm(Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        if(username.equals("none")) {
+        if (username.equals("none")) {
             return "redirect:/user/login";
         }
 
@@ -67,38 +73,48 @@ public class BookController {
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
                                      Errors errors,
-                                    // @RequestParam int bookRatingId,
-                                     Model model) {
+                                     // @RequestParam int bookRatingId,
+                                     Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
             model.addAttribute("bookRatings", bookRatingDao.findAll());
             return "book/add";
         }
 
+        if (username.equals("none")) {
+            return "redirect:/user/login";
+        }
+
+        List<User> users = userDao.findByUsername(username);
+        if (users.isEmpty()) {
+            return "redirect:/user/login";
+        }
+        User loggedInUser = users.get(0);
+
+        newBook.setUser(loggedInUser);
         bookDao.save(newBook);
         return "redirect:";
     }
 
     //remove book
     @RequestMapping(value = "remove", method = RequestMethod.GET)
-    public String displayRemoveBookForm(Model model,  @CookieValue(value = "user", defaultValue = "none") String username)  {
+    public String displayRemoveBookForm(Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        if(username.equals("none")) {
+        if (username.equals("none")) {
             return "redirect:/user/login";
         }
         model.addAttribute("title", "Remove Book");
         model.addAttribute("books", bookDao.findAll());
         return "book/remove";
     }
+
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveBookForm(@RequestParam int[] bookIds) {
         for (int bookId : bookIds) {
-          bookDao.deleteById(bookId);
+            bookDao.deleteById(bookId);
         }
         return "redirect:";
     }
-
-
 
 
     //edit booklist
@@ -117,6 +133,7 @@ public class BookController {
 
         return "book/edit";
     }
+
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
     public String processEditForm(@ModelAttribute @Valid Book editedBook, @PathVariable("bookId") int bookId) {
 
@@ -126,6 +143,6 @@ public class BookController {
     }
 
 
-    }
+}
 
 

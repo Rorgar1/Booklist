@@ -64,5 +64,7 @@ public class User {
         this.password = password;
     }
 
-
+    public int getId() {
+        return id;
+    }
 }

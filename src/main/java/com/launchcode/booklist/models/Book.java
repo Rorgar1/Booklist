@@ -34,7 +34,13 @@ public class Book {
     @ManyToOne
     private User user;
 
-    //private BookRating rating = BookRating.TOBEREAD;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     public Book(String name, String authorName) {
         //this();
