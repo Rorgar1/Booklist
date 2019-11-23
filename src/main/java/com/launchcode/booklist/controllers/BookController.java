@@ -98,18 +98,8 @@ public class BookController {
         return "redirect:";
     }
 
-//view books by rating
- /*   @RequestMapping(value = "rating", method = RequestMethod.GET)
-    public String displayRatingsForm(Model model, @PathVariable int id) {
 
-        Optional<BookRating> bookRating = bookRatingDao.getOne(id);
-        List<Book> books = bookRating.getBooks();
-        model.addAttribute("books", books);
-        model.addAttribute("title", "Books in Category " + bookRating.getName());
-        return "book/index";
 
-}
-*/
 
     //edit booklist
 

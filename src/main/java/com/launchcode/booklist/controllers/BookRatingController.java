@@ -1,17 +1,18 @@
 package com.launchcode.booklist.controllers;
 
+        import com.launchcode.booklist.models.Book;
         import com.launchcode.booklist.models.BookRating;
         import com.launchcode.booklist.models.data.BookRatingDao;
+        import javassist.NotFoundException;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Controller;
         import org.springframework.ui.Model;
         import org.springframework.validation.Errors;
-        import org.springframework.web.bind.annotation.ModelAttribute;
-        import org.springframework.web.bind.annotation.RequestMapping;
-        import org.springframework.web.bind.annotation.RequestMethod;
-        import org.springframework.web.bind.annotation.RequestParam;
+        import org.springframework.web.bind.annotation.*;
 
         import javax.validation.Valid;
+        import java.util.List;
+        import java.util.Optional;
 
 @Controller
 @RequestMapping("bookRating")
@@ -44,5 +45,19 @@ package com.launchcode.booklist.controllers;
         bookRatingDao.save(bookRating);
         return "redirect:";
     }
+    //view books by rating
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public String displayRatingsForm(Model model, @PathVariable("id") int id) throws NotFoundException {
 
+        Optional<BookRating> optionalBookRating = bookRatingDao.findById(id);
+        if (!optionalBookRating.isPresent()) {
+            throw new NotFoundException("Does not exist");
+        }
+        BookRating bookrating = optionalBookRating.get();
+        List<Book> books = bookrating.getBooks();
+        model.addAttribute("books", books);
+        model.addAttribute("title", "Books in Category " + bookrating.getName());
+        return "book/index";
+
+    }
 }
