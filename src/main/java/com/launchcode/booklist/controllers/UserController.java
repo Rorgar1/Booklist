@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +45,7 @@ public class UserController {
         }
         if (user.getPassword().equals(verify_password) && sameName.isEmpty()) {
             userDao.save(user);
-            return "user/index";
+            return "redirect:login?message=New User has been created. Please log in.";
         }
 
         user.setPassword("");
@@ -55,14 +53,15 @@ public class UserController {
         return "user/add";
     }
 
-    @RequestMapping(value = "login")
-    public String loginForm(Model model) {
+    @GetMapping(value = "login")
+    public String loginForm(Model model, @RequestParam(defaultValue = "") String message) {
         model.addAttribute("title", "Login");
+        model.addAttribute("message", message);
         model.addAttribute(new User());
         return "user/login";
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @PostMapping(value = "login")
     public String add(Model model, @ModelAttribute User user, HttpServletResponse response) {
         List<User> users = userDao.findByUsername(user.getUsername());
         if (users.isEmpty()) {
@@ -84,7 +83,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "logout")
+    @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -94,6 +93,6 @@ public class UserController {
                 response.addCookie(c);
             }
         }
-        return "user/login";
+        return "redirect:login";
     }
 }

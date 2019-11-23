@@ -22,10 +22,12 @@
         <span th:errors="*{password}" class="error" style="color : red;"></span>
     </div>
 
+    <h2 th:text="${message}"></h2>
 
     <p th:if="${error_message}" style="color:red;" th:text="${error_message}"></p>
 
     <input type="submit" value="Login" />
+    <a href="/user/add">Add New User</a>
 </form>
 </body>
 </html>
