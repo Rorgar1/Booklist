@@ -65,7 +65,6 @@ public class BookController {
 
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
-        //model.addAttribute("bookRatingId", 0);
         model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
@@ -73,7 +72,6 @@ public class BookController {
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
                                      Errors errors,
-                                     // @RequestParam int bookRatingId,
                                      Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
@@ -120,7 +118,14 @@ public class BookController {
     //edit booklist
 
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.GET)
-    public String displayEditForm(Model model, @PathVariable("bookId") int bookId) throws NotFoundException {
+    public String displayEditForm(Model model,  @PathVariable("bookId") int bookId,
+                                  @CookieValue(value = "user", defaultValue = "none") String username)
+                                throws NotFoundException {
+
+        if (username.equals("none")) {
+            return "redirect:/user/login";
+        }
+
         Optional<Book> optionalBook = bookDao.findById(bookId);
         if (!optionalBook.isPresent()) {
             throw new NotFoundException("Book does not exist");
@@ -135,8 +140,20 @@ public class BookController {
     }
 
     @RequestMapping(value = "edit/{bookId}", method = RequestMethod.POST)
-    public String processEditForm(@ModelAttribute @Valid Book editedBook, @PathVariable("bookId") int bookId) {
+    public String processEditForm(@ModelAttribute @Valid Book editedBook, @PathVariable("bookId") int bookId,
+                                  @CookieValue(value = "user", defaultValue = "none") String username) {
 
+        if (username.equals("none")) {
+            return "redirect:/user/login";
+        }
+
+        List<User> users = userDao.findByUsername(username);
+        if (users.isEmpty()) {
+            return "redirect:/user/login";
+        }
+        User loggedInUser = users.get(0);
+
+        editedBook.setUser(loggedInUser);
         editedBook.setId(bookId);
         bookDao.save(editedBook);
         return "redirect:/book";

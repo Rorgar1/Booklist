@@ -82,15 +82,17 @@ public class BookRatingController {
     public String displayRatingsForm(Model model, @CookieValue(value = "user", defaultValue = "none") String username,
                                      @PathVariable("id") int id) throws NotFoundException {
 
+
         Optional<BookRating> optionalBookRating = bookRatingDao.findById(id);
         if (!optionalBookRating.isPresent()) {
             throw new NotFoundException("Does not exist");
         }
+
         BookRating bookrating = optionalBookRating.get();
         List<Book> books = bookrating.getBooks();
         List<Book> userBooks = new ArrayList<>();
         for (Book book : books) {
-            if (book.getUser().getUsername() == username) {
+            if (book.getUser().getUsername().equals(username)) {
                 userBooks.add(book);
             }
         }
