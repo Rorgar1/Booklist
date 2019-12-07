@@ -86,6 +86,7 @@ public class BookRatingController {
         if (!optionalBookRating.isPresent()) {
             throw new NotFoundException("Does not exist");
         }
+
         BookRating bookrating = optionalBookRating.get();
         List<Book> books = bookrating.getBooks();
         List<Book> userBooks = new ArrayList<>();

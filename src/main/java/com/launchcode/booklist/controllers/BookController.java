@@ -65,7 +65,6 @@ public class BookController {
 
         model.addAttribute("title", "Add Book");
         model.addAttribute(new Book());
-        //model.addAttribute("bookRatingId", 0);
         model.addAttribute("bookRatings", bookRatingDao.findAll());
         return "book/add";
     }
@@ -73,7 +72,6 @@ public class BookController {
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddBookForm(@ModelAttribute @Valid Book newBook,
                                      Errors errors,
-                                     // @RequestParam int bookRatingId,
                                      Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Book");
