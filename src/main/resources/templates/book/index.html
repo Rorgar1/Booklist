@@ -9,13 +9,13 @@
 
 <p th:unless="${books} and ${books.size()}">No books yet</p>
 
-<table class="table table-striped">
+<table class="table table-striped table-bordered">
 
     <tr>
-        <th>Name</th>
-        <th>Author Name</th>
-        <th>Rating</th>
-        <th>Edit</th>
+        <th><u>Title</u></th>
+        <th><u>Author Name</u></th>
+        <th><u>Rating</u></th>
+        <th><u>Edit Entry</u></th>
 
     </tr>
 
@@ -28,7 +28,7 @@
 </table>
 
 <a href="/book/add">Add A Book</a> |
-<a href="/book/remove">Remove From List</a>
+<a href="/book/remove">Remove Book From List</a>
 
 </body>
 </html>
