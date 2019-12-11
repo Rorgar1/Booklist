@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -96,13 +97,29 @@ public class BookController {
 
     //remove book
     @RequestMapping(value = "remove", method = RequestMethod.GET)
-    public String displayRemoveBookForm(Model model, @CookieValue(value = "user", defaultValue = "none") String username) {
+    public String displayRemoveBookForm(Model model,
+                                        //@PathVariable("bookId") int bookId,
+                                        @CookieValue(value = "user", defaultValue = "none")
+                                                String username)  {
 
         if (username.equals("none")) {
             return "redirect:/user/login";
         }
+
+        List<User> users = userDao.findByUsername(username);
+        User loggedinUser = users.get(0);
+
+        //Optional<Book> optionalBook = bookDao.findById(bookId);
+        //Book book = optionalBook.get();
+        List<Book> userBooks = new ArrayList<>();
+        for(Book item: bookDao.findAll()){
+            if (item.getUser().getUsername().equals(username)) {
+                userBooks.add(item);
+            }
+        }
+
         model.addAttribute("title", "Remove Book");
-        model.addAttribute("books", bookDao.findAll());
+        model.addAttribute("books", userBooks);
         return "book/remove";
     }
 
